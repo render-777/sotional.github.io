@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}계정 관리{% endblock %}
+{% block subtitle %}관리자만 새 사용자와 관리자 계정을 생성할 수 있습니다.{% endblock %}
+{% block content %}
+<section class="split">
+  <form method="post" class="form">
+    <label>
+      아이디
+      <input name="username" required>
+    </label>
+    <label>
+      비밀번호
+      <input name="password" type="password" required>
+    </label>
+    <label>
+      권한
+      <select name="role">
+        <option value="user">사용자</option>
+        <option value="admin">관리자</option>
+      </select>
+    </label>
+    <button class="button primary" type="submit">계정 생성</button>
+  </form>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>아이디</th><th>권한</th><th>레이팅</th><th>생성일</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr><td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.role }}</td><td>{{ user.rating }}</td><td>{{ user.created_at }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

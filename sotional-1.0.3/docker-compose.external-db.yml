@@ -1,0 +1,12 @@
+services:
+  web:
+    env_file: .env
+    image: sotional-web:1.0.3
+    build: ./web
+    restart: unless-stopped
+    volumes:
+      - ./web/static/uploads:/app/static/uploads
+    ports:
+      - "${WEB_PORT:-8080}:5000"
+    environment:
+      TZ: Asia/Seoul

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>소셔널 바둑 클럽</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-shell {{ 'auth-shell' if not current_user else '' }}">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="소셔널 바둑 클럽">
+        <div>
+          <strong>소셔널</strong>
+          <small>바둑 클럽</small>
+        </div>
+      </div>
+      {% if current_user %}
+      <nav class="nav">
+        <a class="{{ 'active' if request.path.startswith('/dashboard') else '' }}" href="{{ url_for('dashboard') }}">홈</a>
+        <a class="{{ 'active' if request.path.startswith('/board/notice') else '' }}" href="{{ url_for('board', board='notice') }}">공지사항</a>
+        <a class="{{ 'active' if request.path.startswith('/board/free') else '' }}" href="{{ url_for('board', board='free') }}">자유게시판</a>
+        <div class="nav-group">
+          <a class="{{ 'active' if request.path.startswith('/board/league') else '' }}" href="{{ url_for('board', board='league', league_type='regular') }}">소셔널 리그</a>
+          <div class="subnav">
+            {% for key, label in league_types.items() %}
+            <a class="{{ 'active' if request.args.get('league_type') == key else '' }}" href="{{ url_for('board', board='league', league_type=key) }}">{{ label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        <a class="{{ 'active' if request.path.startswith('/board/news') else '' }}" href="{{ url_for('board', board='news') }}">소셔널 뉴스</a>
+        <a class="{{ 'active' if request.path.startswith('/board/suggestion') else '' }}" href="{{ url_for('board', board='suggestion') }}">건의게시판</a>
+        <a class="{{ 'active' if request.path.startswith('/schedule') else '' }}" href="{{ url_for('schedule') }}">소셔널 일정</a>
+        <a class="{{ 'active' if request.path.startswith('/rating') else '' }}" href="{{ url_for('rating') }}">레이팅</a>
+        {% if current_user.is_admin %}
+        <a class="{{ 'active' if request.path.startswith('/admin/users') else '' }}" href="{{ url_for('users') }}">계정 관리</a>
+        {% endif %}
+      </nav>
+      {% endif %}
+    </aside>
+    <main class="content {{ 'auth-content' if not current_user else '' }}">
+      <header class="topbar">
+        <div>
+          <h1>{% block title %}소셔널 바둑 클럽{% endblock %}</h1>
+          <p>{% block subtitle %}회원과 운영진이 함께 쓰는 클럽 게시 공간입니다.{% endblock %}</p>
+        </div>
+        {% if current_user %}
+        <div class="account">
+          <span>{{ current_user.username }} · {{ '관리자' if current_user.is_admin else '사용자' }}</span>
+          <a class="button ghost" href="{{ url_for('logout') }}">로그아웃</a>
+        </div>
+        {% endif %}
+      </header>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div class="flash">
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

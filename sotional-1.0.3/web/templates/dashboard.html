@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}소셔널 바둑 클럽{% endblock %}
+{% block subtitle %}바둑으로 연결된 사람들, 더 깊은 인사이트의 시작{% endblock %}
+{% block content %}
+<section class="hero">
+  <img src="{{ url_for('static', filename='img/club-hero.png') }}" alt="소셔널 바둑 클럽">
+</section>
+
+<section class="dashboard-grid">
+  <div class="panel">
+    <div class="panel-head">
+      <h2>다가오는 일정</h2>
+      <a href="{{ url_for('schedule') }}">전체보기</a>
+    </div>
+    <div class="compact-list">
+      {% for item in upcoming %}
+      <div class="compact-item">
+        <strong>{{ item.title }}</strong>
+        <span>{{ item.event_date }}{% if item.start_time %} · {{ item.start_time }}{% endif %}{% if item.location %} · {{ item.location }}{% endif %}</span>
+      </div>
+      {% else %}
+      <div class="empty small">예정된 일정이 없습니다.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>레이팅 TOP 5</h2>
+      <a href="{{ url_for('rating') }}">전체보기</a>
+    </div>
+    <div class="compact-list">
+      {% for user in leaders %}
+      <div class="rank-item">
+        <span>{{ loop.index }}</span>
+        <strong>{{ user.username }}</strong>
+        <em>{{ user.rating }}</em>
+      </div>
+      {% else %}
+      <div class="empty small">등록된 회원이 없습니다.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
