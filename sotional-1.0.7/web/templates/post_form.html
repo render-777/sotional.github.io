@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ '글수정' if post is defined else '글쓰기' }}{% endblock %}
+{% block subtitle %}{{ league_types[league_type] if board == 'league' else boards[board].label }}에 글을 {{ '수정합니다' if post is defined else '등록합니다' }}.{% endblock %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="form editor">
+  <label>
+    제목
+    <input name="title" maxlength="200" value="{{ post.title if post is defined else '' }}" required>
+  </label>
+  <label>
+    내용
+    <textarea name="content" rows="12" required>{{ post.content if post is defined else '' }}</textarea>
+  </label>
+  {% if boards[board].allow_image %}
+  <label>
+    사진
+    <input name="image" type="file" accept="image/png,image/jpeg,image/gif,image/webp">
+  </label>
+  {% if post is defined and post.image_path %}
+  <p class="hint">새 사진을 선택하지 않으면 기존 사진이 유지됩니다.</p>
+  {% endif %}
+  {% endif %}
+  {% if board == 'league' and post is not defined %}
+  <section class="sheet-builder">
+    <h2>리그표 양식</h2>
+    <label>
+      양식 선택
+      <select name="sheet_type" id="sheetTypeSelect">
+        <option value="">표 없이 작성</option>
+        {% for key, label in sheet_types.items() %}
+        <option value="{{ key }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="tournament-size-field" id="tournamentSizeField">
+      토너먼트 규모
+      <select name="bracket_size">
+        {% for key, label in tournament_sizes.items() %}
+        <option value="{{ key }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <div class="participant-grid">
+      {% for user in users %}
+      <label class="check-item">
+        <input type="checkbox" name="participants" value="{{ user.username }}">
+        <span>{{ user.username }} · {{ user.rating }}</span>
+      </label>
+      {% endfor %}
+    </div>
+  </section>
+  <script>
+    const sheetTypeSelect = document.getElementById("sheetTypeSelect");
+    const tournamentSizeField = document.getElementById("tournamentSizeField");
+    function toggleTournamentSize() {
+      tournamentSizeField.style.display = sheetTypeSelect.value === "tournament" ? "grid" : "none";
+    }
+    sheetTypeSelect.addEventListener("change", toggleTournamentSize);
+    toggleTournamentSize();
+  </script>
+  {% endif %}
+  <div class="actions">
+    <button class="button primary" type="submit">{{ '수정' if post is defined else '등록' }}</button>
+    <a class="button ghost" href="{{ url_for('board', board=board, league_type=league_type) }}">취소</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}레이팅{% endblock %}
+{% block subtitle %}기본 1000점에서 시작하며 상대 레이팅 차이에 따라 승패 점수가 달라집니다.{% endblock %}
+{% block content %}
+{% if current_user.is_admin %}
+<form method="post" class="form rating-form">
+  <label>
+    승자
+    <select name="winner_id" required>
+      <option value="">선택</option>
+      {% for user in users %}
+      <option value="{{ user.id }}">{{ user.username }} · {{ user.rating }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    패자
+    <select name="loser_id" required>
+      <option value="">선택</option>
+      {% for user in users %}
+      <option value="{{ user.id }}">{{ user.username }} · {{ user.rating }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    메모
+    <input name="memo" maxlength="255" placeholder="예: 정기리그 1국">
+  </label>
+  <button class="button primary" type="submit">결과 등록</button>
+</form>
+{% endif %}
+
+<section class="split wide">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>순위</th><th>회원</th><th>권한</th><th>레이팅</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr><td>{{ loop.index }}</td><td>{{ user.username }}</td><td>{{ user.role }}</td><td><strong>{{ user.rating }}</strong></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>일시</th><th>승자</th><th>패자</th><th>변동</th></tr>
+      </thead>
+      <tbody>
+        {% for match in matches %}
+        <tr>
+          <td>{{ match.played_at }}</td>
+          <td>{{ match.winner_name }} {{ '%+d'|format(match.winner_delta) }}</td>
+          <td>{{ match.loser_name }} {{ '%+d'|format(match.loser_delta) }}</td>
+          <td>{{ match.winner_before }} → {{ match.winner_after }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4">등록된 대국 결과가 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

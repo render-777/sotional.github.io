@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: sotional
+    runtime: docker
+    plan: free
+    rootDir: sotional-1.0.7/web
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: TZ
+        value: Asia/Seoul
+      - key: UPLOAD_FOLDER
+        value: /app/static/uploads
+      - key: MYSQL_DATABASE
+        value: sotional
+      - key: DB_HOST
+        value: serverless-europe-west2.sysp0000.db2.skysql.com
+      - key: DB_PORT
+        value: 4001
+      - key: DB_SSL_MODE
+        value: REQUIRED
+      - key: DB_SSL_CA
+        value: /etc/secrets/globalsignrootca.pem
+      - key: SECRET_KEY
+        sync: false
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false

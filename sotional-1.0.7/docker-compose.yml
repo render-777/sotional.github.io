@@ -1,0 +1,41 @@
+networks:
+  sotional-network:
+    driver: bridge
+
+services:
+  db:
+    env_file: .env
+    image: sotional-db:1.0.7
+    build: ./db
+    restart: unless-stopped
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sotional-network
+
+  web:
+    env_file: .env
+    image: sotional-web:1.0.7
+    build: ./web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./web/static/uploads:/app/static/uploads
+    ports:
+      - "${WEB_PORT}:5000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      TZ: Asia/Seoul
+    networks:
+      - sotional-network
