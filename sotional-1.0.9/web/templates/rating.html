@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}레이팅{% endblock %}
+{% block subtitle %}기본 1000점에서 시작하며 상대 레이팅 차이에 따라 승패 점수가 달라집니다.{% endblock %}
+{% block content %}
+{% if current_user.is_admin %}
+<form method="post" class="form rating-form">
+  <label>
+    승자
+    <select name="winner_id" required>
+      <option value="">선택</option>
+      {% for user in users %}
+      <option value="{{ user.id }}">{{ user.username }} · {{ user.rating }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    패자
+    <select name="loser_id" required>
+      <option value="">선택</option>
+      {% for user in users %}
+      <option value="{{ user.id }}">{{ user.username }} · {{ user.rating }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>
+    메모
+    <input name="memo" maxlength="255" placeholder="예: 정기리그 1국">
+  </label>
+  <button class="button primary" type="submit">결과 등록</button>
+</form>
+{% endif %}
+
+<section class="split wide">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>순위</th><th>회원</th><th>레이팅</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>
+            <a class="rating-user-link" href="{{ url_for('rating_user', user_id=user.id) }}">{{ user.username }}</a>
+            {% if loop.index <= 3 %}
+            <span class="medal medal-{{ loop.index }}">{{ loop.index }}</span>
+            {% endif %}
+          </td>
+          <td><strong>{{ user.rating }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>순번</th><th>년도</th><th>월/일</th><th>승자</th><th>패자</th><th>메모</th></tr>
+      </thead>
+      <tbody>
+        {% for match in matches %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ match.played_at.year }}</td>
+          <td>{{ match.played_at.month }}/{{ match.played_at.day }}</td>
+          <td>{{ match.winner_name }}</td>
+          <td>{{ match.loser_name }}</td>
+          <td>{{ match.memo or '레이팅 대국' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6">등록된 대국 결과가 없습니다.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -3,7 +3,7 @@ services:
     name: sotional
     runtime: docker
     plan: free
-    rootDir: sotional-1.0.7/web
+    rootDir: sotional-1.0.9/web
     dockerfilePath: ./Dockerfile
     envVars:
       - key: PORT

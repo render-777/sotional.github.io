@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}로그인{% endblock %}
+{% block subtitle %}소셔널 바둑 클럽 회원 공간에 접속합니다.{% endblock %}
+{% block content %}
+<section class="auth-panel">
+  <img class="login-logo" src="{{ url_for('static', filename='img/logo.png') }}" alt="소셔널 바둑 클럽">
+  <form method="post" class="form">
+    <label>
+      아이디
+      <input name="username" autocomplete="username" required>
+    </label>
+    <label>
+      비밀번호
+      <input name="password" type="password" autocomplete="current-password" required>
+    </label>
+    <button class="button primary" type="submit">로그인</button>
+  </form>
+</section>
+{% endblock %}
