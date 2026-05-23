@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ '일정 수정' if item else '일정 추가' }}{% endblock %}
+{% block subtitle %}관리자만 클럽 일정을 등록하고 수정할 수 있습니다.{% endblock %}
+{% block content %}
+<form method="post" class="form editor">
+  <label>
+    제목
+    <input name="title" maxlength="200" value="{{ item.title if item else '' }}" required>
+  </label>
+  <label>
+    날짜
+    <input name="event_date" type="date" value="{{ item.event_date if item else '' }}" required>
+  </label>
+  <label>
+    시간
+    <input name="start_time" type="time" value="{{ item.start_time|time_input if item and item.start_time else '' }}">
+  </label>
+  <label>
+    장소
+    <input name="location" maxlength="200" value="{{ item.location if item else '' }}">
+  </label>
+  <label>
+    내용
+    <textarea name="content" rows="8">{{ item.content if item and item.content else '' }}</textarea>
+  </label>
+  <div class="actions">
+    <button class="button primary" type="submit">{{ '수정' if item else '등록' }}</button>
+    <a class="button ghost" href="{{ url_for('schedule') }}">취소</a>
+  </div>
+</form>
+{% endblock %}
