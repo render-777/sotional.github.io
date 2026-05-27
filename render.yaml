@@ -22,6 +22,20 @@ services:
         value: REQUIRED
       - key: DB_SSL_CA
         value: /etc/secrets/globalsignrootca.pem
+      - key: STORAGE_BACKEND
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_PUBLIC_BASE_URL
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_REGION
+        sync: false
       - key: SECRET_KEY
         sync: false
       - key: ADMIN_USERNAME
