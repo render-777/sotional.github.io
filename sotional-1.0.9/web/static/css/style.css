@@ -245,7 +245,7 @@ a {
 
 .post-card a {
   display: grid;
-  grid-template-columns: 1fr 130px;
+  grid-template-columns: minmax(0, 1fr) 180px;
   gap: 16px;
   padding: 18px;
 }
@@ -262,10 +262,11 @@ a {
 }
 
 .post-card img {
-  width: 130px;
-  height: 92px;
-  object-fit: cover;
+  width: 160px;
+  height: 112px;
+  object-fit: contain;
   border-radius: 6px;
+  background: #f6f8f7;
 }
 
 .post-card footer {
