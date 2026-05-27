@@ -40,7 +40,7 @@
         <p>{{ post.content[:120] }}{% if post.content|length > 120 %}...{% endif %}</p>
       </div>
       {% if post.image_path %}
-      <img src="{{ url_for('static', filename=post.image_path) }}" alt="">
+      <img src="{{ image_url(post.image_path) }}" alt="">
       {% endif %}
     </a>
     <footer>{{ post.username }} · {{ post.created_at }}</footer>

@@ -4,7 +4,7 @@
 {% block content %}
 <article class="detail">
   {% if post.image_path %}
-  <img class="detail-image" src="{{ url_for('static', filename=post.image_path) }}" alt="">
+  <img class="detail-image" src="{{ image_url(post.image_path) }}" alt="">
   {% endif %}
   <div class="detail-content">{{ post.content }}</div>
   {% if post.sheet %}
