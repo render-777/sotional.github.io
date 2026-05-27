@@ -1,4 +1,5 @@
 import json
+import mimetypes
 import os
 import time
 from calendar import Calendar, month_name
@@ -463,6 +464,7 @@ def inject_globals():
         "sheet_types": SHEET_TYPES,
         "tournament_sizes": TOURNAMENT_SIZES,
         "can_manage_post": can_manage_post,
+        "image_url": image_url,
     }
 
 
@@ -672,6 +674,50 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def image_url(path):
+    if not path:
+        return ""
+    if path.startswith(("http://", "https://")):
+        return path
+    return url_for("static", filename=path)
+
+
+def upload_to_object_storage(file, filename):
+    try:
+        import boto3
+    except ImportError:
+        flash("외부 이미지 저장소 패키지가 설치되지 않았습니다.")
+        return None
+
+    bucket = env_value("S3_BUCKET")
+    endpoint_url = env_value("S3_ENDPOINT_URL")
+    public_base_url = env_value("S3_PUBLIC_BASE_URL")
+    access_key = env_value("S3_ACCESS_KEY_ID")
+    secret_key = env_value("S3_SECRET_ACCESS_KEY")
+    region = env_value("S3_REGION", "auto")
+    if not all([bucket, endpoint_url, public_base_url, access_key, secret_key]):
+        flash("외부 이미지 저장소 환경변수가 부족합니다.")
+        return None
+
+    key = f"uploads/{filename}"
+    content_type = file.content_type or mimetypes.guess_type(filename)[0] or "application/octet-stream"
+    client = boto3.client(
+        "s3",
+        endpoint_url=endpoint_url,
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name=region,
+    )
+    file.stream.seek(0)
+    client.upload_fileobj(
+        file.stream,
+        bucket,
+        key,
+        ExtraArgs={"ContentType": content_type},
+    )
+    return f"{public_base_url.rstrip('/')}/{key}"
+
+
 def save_upload(file):
     if not file or file.filename == "":
         return None
@@ -680,6 +726,8 @@ def save_upload(file):
         return None
     safe_name = secure_filename(file.filename)
     filename = f"{uuid4().hex}_{safe_name}"
+    if env_value("STORAGE_BACKEND", "local").lower() in {"s3", "r2"}:
+        return upload_to_object_storage(file, filename)
     file.save(UPLOAD_FOLDER / filename)
     return f"uploads/{filename}"
 
